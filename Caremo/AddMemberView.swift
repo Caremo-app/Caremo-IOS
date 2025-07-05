@@ -4,10 +4,10 @@ struct AddMemberView: View {
     @Environment(\.presentationMode) var presentationMode
     @State private var name = ""
     @State private var email = ""
-    @State private var role = "relay"
+    @State private var role = "relay" // default
     @State private var isLoading = false
 
-    var onAddMember: (() -> Void)? // ✅ callback refresh
+    let roles = ["relay", "receiver"]
 
     var body: some View {
         NavigationView {
@@ -16,6 +16,13 @@ struct AddMemberView: View {
                     TextField("Name", text: $name)
                     TextField("Email", text: $email)
                         .autocapitalization(.none)
+
+                    Picker("Role", selection: $role) {
+                        ForEach(roles, id: \.self) { role in
+                            Text(role.capitalized).tag(role)
+                        }
+                    }
+                    .pickerStyle(SegmentedPickerStyle())
                 }
 
                 Section {
@@ -41,8 +48,10 @@ struct AddMemberView: View {
 
         isLoading = true
 
+        // Step 1: Register user first
         registerUser { success in
             if success {
+                // Step 2: Add to family
                 addMemberToFamily(token: token)
             } else {
                 DispatchQueue.main.async {
@@ -104,7 +113,6 @@ struct AddMemberView: View {
                 print("✅ Add member success: \(responseString)")
                 DispatchQueue.main.async {
                     presentationMode.wrappedValue.dismiss()
-                    onAddMember?() // ✅ call refresh
                 }
             }
         }.resume()

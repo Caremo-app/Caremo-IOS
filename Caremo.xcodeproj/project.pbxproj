@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		D030B6932E19E77E007677CB /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = D030B6922E19E77E007677CB /* Alamofire */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		D008516D2E1912EE00002A74 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D030B6932E19E77E007677CB /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +117,7 @@
 			);
 			name = Caremo;
 			packageProductDependencies = (
+				D030B6922E19E77E007677CB /* Alamofire */,
 			);
 			productName = Caremo;
 			productReference = D008515A2E1912ED00002A74 /* Caremo.app */;
@@ -195,6 +201,9 @@
 			);
 			mainGroup = D00851512E1912ED00002A74;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				D030B6912E19E77E007677CB /* XCRemoteSwiftPackageReference "Alamofire" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D008515B2E1912ED00002A74 /* Products */;
 			projectDirPath = "";
@@ -554,6 +563,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D030B6912E19E77E007677CB /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D030B6922E19E77E007677CB /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D030B6912E19E77E007677CB /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D00851522E1912ED00002A74 /* Project object */;
 }

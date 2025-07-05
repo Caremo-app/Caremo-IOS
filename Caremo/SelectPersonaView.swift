@@ -1,19 +1,21 @@
 import SwiftUI
 
 struct SelectPersonaView: View {
-    @State private var personas: [Persona] = []
+    @State private var personas: [UserPersona] = []
     @State private var showingAddMember = false
     @EnvironmentObject var session: SessionManager
 
     var body: some View {
         NavigationView {
             VStack {
+                // Title
                 Text("Siapa yang menggunakan Caremo hari ini?")
                     .font(.title2)
                     .fontWeight(.semibold)
                     .foregroundColor(Color("PrimaryColor"))
                     .padding()
 
+                // List personas
                 if personas.isEmpty {
                     Text("Belum ada anggota terdaftar.")
                         .foregroundColor(.gray)
@@ -45,6 +47,20 @@ struct SelectPersonaView: View {
 
                 Spacer()
 
+                // Refresh button (optional)
+                Button(action: {
+                    fetchPersonas()
+                }) {
+                    Text("Refresh Members")
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color("PrimaryColor"))
+                        .cornerRadius(8)
+                        .padding(.horizontal)
+                }
+
+                // Add Member button
                 Button(action: {
                     showingAddMember = true
                 }) {
@@ -59,7 +75,10 @@ struct SelectPersonaView: View {
             }
             .navigationTitle("Pilih Pengguna")
             .sheet(isPresented: $showingAddMember, onDismiss: {
-                fetchPersonas()
+                // ✅ Delay to ensure backend commit is done before re-fetching
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    fetchPersonas()
+                }
             }) {
                 AddMemberView()
             }
@@ -89,26 +108,29 @@ struct SelectPersonaView: View {
                 return
             }
 
-            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 401 {
-                print("❌ Token expired. Logging out...")
-                DispatchQueue.main.async {
-                    session.logout()
-                }
-                return
-            }
-
             if let data = data {
+                if let responseString = String(data: data, encoding: .utf8) {
+                    print("🔍 Raw personas response: \(responseString)")
+                }
+
+                // Check token expired
+                if let decodedError = try? JSONDecoder().decode([String: String].self, from: data),
+                   decodedError["detail"] == "Access token expired" {
+                    print("❌ Token expired. Logging out...")
+                    DispatchQueue.main.async {
+                        session.logout()
+                    }
+                    return
+                }
+
                 do {
-                    let decoded = try JSONDecoder().decode([Persona].self, from: data)
+                    let decoded = try JSONDecoder().decode([UserPersona].self, from: data)
                     DispatchQueue.main.async {
                         personas = decoded
                         print("✅ Personas loaded: \(decoded.count)")
                     }
                 } catch {
                     print("❌ Failed to decode personas: \(error)")
-                    if let responseString = String(data: data, encoding: .utf8) {
-                        print("🔍 Raw response: \(responseString)")
-                    }
                 }
             }
         }.resume()

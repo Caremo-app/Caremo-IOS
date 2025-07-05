@@ -52,7 +52,7 @@ struct DashboardView: View {
 struct DashboardView_Previews: PreviewProvider {
     static var previews: some View {
         let dummySession = SessionManager()
-        dummySession.selectedPersona = Persona(id: 1, name: "Rafi", email: "rafi@caremo.id", role: "relay")
+        dummySession.selectedPersona = UserPersona(id: 1, name: "Rafi", email: "rafi@caremo.id", role: "relay")
         return DashboardView()
             .environmentObject(dummySession)
     }
