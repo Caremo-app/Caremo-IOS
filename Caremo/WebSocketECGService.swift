@@ -7,28 +7,28 @@ class WebSocketECGService: NSObject {
     private var webSocketTask: URLSessionWebSocketTask?
     private let urlSession = URLSession(configuration: .default)
     
-    /// Connect to websocket
-    func connect() {
-        guard webSocketTask == nil else { return } // Prevent duplicate connection
+    func connect(clientID: String) {
+        guard webSocketTask == nil else { return }
         
-        let url = URL(string: "wss://your-backend-websocket-url")! // Replace with your backend URL
+        let urlString = "wss://api.caremo.id/ws/send/\(clientID)"
+        guard let url = URL(string: urlString) else {
+            print("❌ Invalid WebSocket URL")
+            return
+        }
+        
         webSocketTask = urlSession.webSocketTask(with: url)
         webSocketTask?.resume()
         
-        print("✅ WebSocket connected to backend")
-        
-        // Optionally listen to server messages
+        print("✅ WebSocket connected to backend: \(urlString)")
         receive()
     }
     
-    /// Disconnect from websocket
     func disconnect() {
         webSocketTask?.cancel(with: .normalClosure, reason: nil)
         webSocketTask = nil
         print("🛑 WebSocket disconnected")
     }
     
-    /// Send ECG data
     func sendECG(ecg: [Double]) {
         guard let task = webSocketTask else {
             print("❌ WebSocket is not connected")
@@ -44,7 +44,7 @@ class WebSocketECGService: NSObject {
                 if let error = error {
                     print("❌ Error sending ECG over WebSocket: \(error.localizedDescription)")
                 } else {
-                    print("✅ ECG sent to backend via WebSocket: \(ecg)")
+                    print("✅ ECG sent to backend via WebSocket (\(ecg.count) samples)")
                 }
             }
         } catch {
@@ -52,7 +52,6 @@ class WebSocketECGService: NSObject {
         }
     }
     
-    /// Receive messages from backend
     private func receive() {
         webSocketTask?.receive { [weak self] result in
             switch result {
@@ -65,7 +64,7 @@ class WebSocketECGService: NSObject {
                 @unknown default:
                     break
                 }
-                self?.receive() // Continue listening
+                self?.receive()
             case .failure(let error):
                 print("❌ WebSocket receive error: \(error.localizedDescription)")
             }

@@ -6,11 +6,13 @@ struct DashboardView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
+                // Title
                 Text("Dashboard")
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .padding()
 
+                // Persona info
                 if let persona = session.selectedPersona {
                     VStack(spacing: 10) {
                         Text("Welcome, \(persona.name)!")
@@ -23,13 +25,28 @@ struct DashboardView: View {
                         Text("Role: \(persona.role.capitalized)")
                             .foregroundColor(persona.relay ? .green : .red)
                     }
+                    .padding()
                 } else {
                     Text("No persona selected.")
                         .foregroundColor(.gray)
                 }
 
+                Divider()
+
+                // ECG section placeholder
+                VStack(spacing: 10) {
+                    Text("ECG Monitoring")
+                        .font(.headline)
+                        .foregroundColor(Color("PrimaryColor"))
+
+                    Text("Waiting for ECG data...")
+                        .foregroundColor(.gray)
+                }
+                .padding()
+
                 Spacer()
 
+                // Logout button
                 Button(action: {
                     session.logout()
                 }) {
@@ -41,8 +58,6 @@ struct DashboardView: View {
                         .cornerRadius(8)
                 }
                 .padding(.horizontal)
-
-                Spacer()
             }
             .navigationTitle("Dashboard")
         }

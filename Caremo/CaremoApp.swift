@@ -7,7 +7,7 @@ struct CaremoApp: App {
     init() {
         // Activate WatchSessionManager & WebSocket on launch
         _ = WatchSessionManager.shared
-        WebSocketECGService.shared.connect()
+        WebSocketECGService.shared.connect(clientID: "1")
     }
     
     var body: some Scene {

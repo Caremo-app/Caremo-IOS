@@ -42,7 +42,6 @@ class ExtensionDelegate: NSObject, WKExtensionDelegate, WCSessionDelegate {
             print("✅ Persona synced from iPhone:")
             print("Name: \(name), Email: \(email), Role: \(role)")
             
-            // Optionally save to UserDefaults
             UserDefaults.standard.set(name, forKey: "persona_name")
             UserDefaults.standard.set(email, forKey: "persona_email")
             UserDefaults.standard.set(role, forKey: "persona_role")

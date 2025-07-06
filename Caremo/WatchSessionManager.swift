@@ -5,12 +5,19 @@ class WatchSessionManager: NSObject, WCSessionDelegate {
     
     static let shared = WatchSessionManager()
     
-    override init() {
+    private override init() { // changed to private for singleton safety
         super.init()
+        activateSession()
+    }
+    
+    private func activateSession() {
         if WCSession.isSupported() {
-            WCSession.default.delegate = self
-            WCSession.default.activate()
+            let session = WCSession.default
+            session.delegate = self
+            session.activate()
             print("✅ WatchSessionManager initialized and activated.")
+        } else {
+            print("❌ WCSession not supported on this device.")
         }
     }
     
@@ -28,11 +35,12 @@ class WatchSessionManager: NSObject, WCSessionDelegate {
     }
     
     func sessionDidDeactivate(_ session: WCSession) {
-        print("ℹ️ Watch session did deactivate.")
-        WCSession.default.activate()
+        print("ℹ️ Watch session did deactivate. Reactivating...")
+        session.activate()
     }
     
-    /// Receive message from Watch app
+    // MARK: - Receiving Messages from Watch
+    
     func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
         print("📩 Received message from Watch: \(message)")
         
@@ -42,13 +50,9 @@ class WatchSessionManager: NSObject, WCSessionDelegate {
         }
     }
     
-    /// Sync persona to Watch app
+    // MARK: - Sync Persona to Watch
+    
     func syncPersonaToWatch(persona: UserPersona) {
-        guard WCSession.default.isReachable else {
-            print("❌ Watch not reachable. Cannot sync persona.")
-            return
-        }
-        
         let data: [String: Any] = [
             "type": "persona",
             "name": persona.name,
@@ -56,10 +60,21 @@ class WatchSessionManager: NSObject, WCSessionDelegate {
             "role": persona.role
         ]
         
-        WCSession.default.sendMessage(data, replyHandler: nil) { error in
-            print("❌ Failed to send persona to Watch: \(error.localizedDescription)")
-        }
+        let session = WCSession.default
         
-        print("✅ Persona sent to Watch: \(persona.name)")
+        if session.isReachable {
+            session.sendMessage(data, replyHandler: nil) { error in
+                print("❌ Failed to send persona to Watch: \(error.localizedDescription)")
+            }
+            print("✅ Persona sent to Watch (sendMessage): \(persona.name)")
+        } else {
+            // Fallback to Application Context for background sync
+            do {
+                try session.updateApplicationContext(data)
+                print("✅ Persona updated via ApplicationContext: \(persona.name)")
+            } catch {
+                print("❌ Failed to update ApplicationContext: \(error.localizedDescription)")
+            }
+        }
     }
 }

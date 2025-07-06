@@ -17,14 +17,13 @@ class SessionManager: ObservableObject {
         }
     }
 
-    /// Set persona saat user memilih di SelectPersonaView
     func setPersona(_ persona: UserPersona) {
         selectedPersona = persona
         UserDefaults.standard.set(persona.name, forKey: "current_persona")
         UserDefaults.standard.set(persona.email, forKey: "current_persona_email")
-        
-        // Sync to Watch
+
         WatchSessionManager.shared.syncPersonaToWatch(persona: persona)
+        print("✅ Persona set: \(persona.name)")
     }
 
     func logout() {
@@ -35,10 +34,8 @@ class SessionManager: ObservableObject {
 
         selectedPersona = nil
         isLoggedIn = false
-        
-        WebSocketECGService.shared.disconnect()
-        
-        print("✅ User logged out. All tokens, persona, and websocket cleared.")
+
+        print("✅ User logged out. All tokens and persona cleared.")
     }
 
     func loginSuccess() {

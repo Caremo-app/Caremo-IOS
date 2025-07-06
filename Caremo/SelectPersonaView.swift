@@ -8,14 +8,12 @@ struct SelectPersonaView: View {
     var body: some View {
         NavigationView {
             VStack {
-                // Title
                 Text("Siapa yang menggunakan Caremo hari ini?")
                     .font(.title2)
                     .fontWeight(.semibold)
                     .foregroundColor(Color("PrimaryColor"))
                     .padding()
 
-                // List personas
                 if personas.isEmpty {
                     Text("Belum ada anggota terdaftar.")
                         .foregroundColor(.gray)
@@ -24,13 +22,13 @@ struct SelectPersonaView: View {
                     List(personas) { persona in
                         Button(action: {
                             session.setPersona(persona)
+                            WatchSessionManager.shared.syncPersonaToWatch(persona: persona)
                         }) {
                             HStack {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(persona.name)
                                         .font(.headline)
                                         .foregroundColor(Color("PrimaryColor"))
-
                                     Text(persona.email)
                                         .font(.subheadline)
                                         .foregroundColor(.gray)
@@ -47,7 +45,6 @@ struct SelectPersonaView: View {
 
                 Spacer()
 
-                // Refresh button (optional)
                 Button(action: {
                     fetchPersonas()
                 }) {
@@ -60,7 +57,6 @@ struct SelectPersonaView: View {
                         .padding(.horizontal)
                 }
 
-                // Add Member button
                 Button(action: {
                     showingAddMember = true
                 }) {
@@ -75,7 +71,6 @@ struct SelectPersonaView: View {
             }
             .navigationTitle("Pilih Pengguna")
             .sheet(isPresented: $showingAddMember, onDismiss: {
-                // ✅ Delay to ensure backend commit is done before re-fetching
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                     fetchPersonas()
                 }
@@ -84,6 +79,10 @@ struct SelectPersonaView: View {
             }
             .onAppear {
                 fetchPersonas()
+            }
+            .fullScreenCover(item: $session.selectedPersona) { _ in
+                DashboardView()
+                    .environmentObject(session)
             }
         }
     }
@@ -113,7 +112,6 @@ struct SelectPersonaView: View {
                     print("🔍 Raw personas response: \(responseString)")
                 }
 
-                // Check token expired
                 if let decodedError = try? JSONDecoder().decode([String: String].self, from: data),
                    decodedError["detail"] == "Access token expired" {
                     print("❌ Token expired. Logging out...")
