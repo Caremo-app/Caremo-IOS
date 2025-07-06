@@ -91,6 +91,7 @@ struct ContentView: View {
         if WCSession.default.isReachable {
             let ecgSample = generateDummyECG30s()
             let message = ["ecg": ecgSample]
+            print(message)
             WCSession.default.sendMessage(message, replyHandler: nil) { error in
                 print("❌ Error sending ECG: \(error.localizedDescription)")
             }
@@ -101,6 +102,6 @@ struct ContentView: View {
     }
     
     func generateDummyECG30s() -> [Double] {
-        (0..<7500).map { _ in Double.random(in: 0.8...1.2) }
+        (0..<300).map { _ in Double.random(in: 0.8...1.2) }
     }
 }
