@@ -18,8 +18,9 @@ class ExtensionDelegate: NSObject, WKExtensionDelegate, WCSessionDelegate {
     override init() {
         super.init()
         if WCSession.isSupported() {
-            WCSession.default.delegate = self
-            WCSession.default.activate()
+            let session = WCSession.default
+            session.delegate = self
+            session.activate()
             print("✅ Watch WCSession activated.")
         }
     }
@@ -31,6 +32,27 @@ class ExtensionDelegate: NSObject, WKExtensionDelegate, WCSessionDelegate {
         }
     }
     
+    // MARK: - Receive application context sync (persona)
+    func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
+        print("📩 Received application context from iPhone: \(applicationContext)")
+        
+        if let type = applicationContext["type"] as? String, type == "persona" {
+            let name = applicationContext["name"] as? String ?? "-"
+            let email = applicationContext["email"] as? String ?? "-"
+            let role = applicationContext["role"] as? String ?? "-"
+            
+            print("✅ Persona synced from iPhone (applicationContext):")
+            print("Name: \(name), Email: \(email), Role: \(role)")
+            
+            UserDefaults.standard.set(name, forKey: "persona_name")
+            UserDefaults.standard.set(email, forKey: "persona_email")
+            UserDefaults.standard.set(role, forKey: "persona_role")
+            
+            NotificationCenter.default.post(name: .personaUpdated, object: nil)
+        }
+    }
+    
+    // MARK: - Optional: Receive direct messages
     func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
         print("📩 Received message from iPhone: \(message)")
         
@@ -39,12 +61,14 @@ class ExtensionDelegate: NSObject, WKExtensionDelegate, WCSessionDelegate {
             let email = message["email"] as? String ?? "-"
             let role = message["role"] as? String ?? "-"
             
-            print("✅ Persona synced from iPhone:")
+            print("✅ Persona synced from iPhone (message):")
             print("Name: \(name), Email: \(email), Role: \(role)")
             
             UserDefaults.standard.set(name, forKey: "persona_name")
             UserDefaults.standard.set(email, forKey: "persona_email")
             UserDefaults.standard.set(role, forKey: "persona_role")
+            
+            NotificationCenter.default.post(name: .personaUpdated, object: nil)
         }
     }
 }

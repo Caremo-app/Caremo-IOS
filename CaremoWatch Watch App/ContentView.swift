@@ -1,8 +1,35 @@
 import SwiftUI
 import WatchConnectivity
+import Combine
+
+class ContentViewModel: ObservableObject {
+    @Published var personaName: String = "-"
+    private var cancellables = Set<AnyCancellable>()
+    
+    init() {
+        // Load initial value
+        personaName = UserDefaults.standard.string(forKey: "persona_name") ?? "-"
+        
+        // Listen to persona updates
+        NotificationCenter.default.publisher(for: .personaUpdated)
+            .sink { [weak self] _ in
+                self?.personaName = UserDefaults.standard.string(forKey: "persona_name") ?? "-"
+            }
+            .store(in: &cancellables)
+        
+        // Activate WCSession if needed
+        if WCSession.isSupported() {
+            WCSession.default.activate()
+        }
+    }
+}
+
+extension Notification.Name {
+    static let personaUpdated = Notification.Name("personaUpdated")
+}
 
 struct ContentView: View {
-    @State private var personaName: String = UserDefaults.standard.string(forKey: "persona_name") ?? "-"
+    @StateObject private var viewModel = ContentViewModel()
     @State private var timer: Timer?
     @State private var isSending = false
     
@@ -11,7 +38,7 @@ struct ContentView: View {
             Text("Caremo Watch")
                 .font(.headline)
             
-            Text("Persona: \(personaName)")
+            Text("Persona: \(viewModel.personaName)")
                 .font(.footnote)
             
             if isSending {
@@ -33,14 +60,10 @@ struct ContentView: View {
         .onDisappear {
             stopECGTimer()
         }
-        .onAppear {
-            // Update persona name every appear (in case synced after launch)
-            personaName = UserDefaults.standard.string(forKey: "persona_name") ?? "-"
-        }
     }
     
     func startECGTimer() {
-        guard personaName != "-" else {
+        guard viewModel.personaName != "-" else {
             print("❌ Persona not synced. Cannot start ECG.")
             return
         }

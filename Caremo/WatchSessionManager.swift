@@ -5,20 +5,21 @@ class WatchSessionManager: NSObject, WCSessionDelegate {
     
     static let shared = WatchSessionManager()
     
-    private override init() { // changed to private for singleton safety
+    private override init() {
         super.init()
         activateSession()
     }
     
     private func activateSession() {
-        if WCSession.isSupported() {
-            let session = WCSession.default
-            session.delegate = self
-            session.activate()
-            print("✅ WatchSessionManager initialized and activated.")
-        } else {
+        guard WCSession.isSupported() else {
             print("❌ WCSession not supported on this device.")
+            return
         }
+        
+        let session = WCSession.default
+        session.delegate = self
+        session.activate()
+        print("✅ WatchSessionManager initialized and WCSession activated.")
     }
     
     // MARK: - WCSessionDelegate
@@ -45,7 +46,7 @@ class WatchSessionManager: NSObject, WCSessionDelegate {
         print("📩 Received message from Watch: \(message)")
         
         if let ecg = message["ecg"] as? [Double] {
-            print("💓 ECG data received: \(ecg)")
+            print("💓 ECG data received: \(ecg.count) samples")
             WebSocketECGService.shared.sendECG(ecg: ecg)
         }
     }
@@ -62,13 +63,24 @@ class WatchSessionManager: NSObject, WCSessionDelegate {
         
         let session = WCSession.default
         
+        guard session.isPaired else {
+            print("❌ Apple Watch is not paired. Cannot sync persona.")
+            return
+        }
+        
+        guard session.isWatchAppInstalled else {
+            print("❌ Watch app is not installed. Cannot sync persona.")
+            return
+        }
+        
         if session.isReachable {
+            // Immediate send if Watch app is active
             session.sendMessage(data, replyHandler: nil) { error in
                 print("❌ Failed to send persona to Watch: \(error.localizedDescription)")
             }
-            print("✅ Persona sent to Watch (sendMessage): \(persona.name)")
+            print("✅ Persona sent to Watch via sendMessage: \(persona.name)")
         } else {
-            // Fallback to Application Context for background sync
+            // Application Context fallback (state sync)
             do {
                 try session.updateApplicationContext(data)
                 print("✅ Persona updated via ApplicationContext: \(persona.name)")
