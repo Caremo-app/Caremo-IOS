@@ -3,15 +3,19 @@ import SwiftUI
 @main
 struct CaremoApp: App {
     @StateObject var session = SessionManager()
-
+    
+    init() {
+        // Activate WatchSessionManager & WebSocket on launch
+        _ = WatchSessionManager.shared
+        WebSocketECGService.shared.connect()
+    }
+    
     var body: some Scene {
         WindowGroup {
             if session.isLoggedIn {
-                // Jika sudah login ➔ ke SelectPersonaView
                 SelectPersonaView()
                     .environmentObject(session)
             } else {
-                // Jika belum login ➔ ke LoginView
                 LoginView()
                     .environmentObject(session)
             }

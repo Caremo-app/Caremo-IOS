@@ -7,7 +7,50 @@
 		<key>Caremo.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
+		<key>CaremoWatch Watch App.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
 			<integer>0</integer>
+		</dict>
+		<key>CaremoWatch.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>D012FD0A2E1A0B5300790452</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>D012FD162E1A0B5400790452</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>D012FD202E1A0B5400790452</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>D012FD2C2E1A0B5400790452</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>D012FD3B2E1A0B5400790452</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>D012FD452E1A0B5400790452</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>
