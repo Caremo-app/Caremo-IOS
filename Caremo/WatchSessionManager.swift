@@ -22,8 +22,6 @@ class WatchSessionManager: NSObject, WCSessionDelegate {
         print("✅ WatchSessionManager initialized and WCSession activated.")
     }
     
-    // MARK: - WCSessionDelegate
-    
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
         print("✅ iOS Watch session activated with state: \(activationState.rawValue)")
         if let error = error {
@@ -40,8 +38,6 @@ class WatchSessionManager: NSObject, WCSessionDelegate {
         session.activate()
     }
     
-    // MARK: - Receiving Messages from Watch
-    
     func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
         print("📩 Received message from Watch: \(message)")
         
@@ -50,8 +46,6 @@ class WatchSessionManager: NSObject, WCSessionDelegate {
             WebSocketECGService.shared.sendECG(ecg: ecg)
         }
     }
-    
-    // MARK: - Sync Persona to Watch
     
     func syncPersonaToWatch(persona: UserPersona) {
         let data: [String: Any] = [
@@ -62,6 +56,8 @@ class WatchSessionManager: NSObject, WCSessionDelegate {
         ]
         
         let session = WCSession.default
+        
+        print("isPaired: \(session.isPaired), isWatchAppInstalled: \(session.isWatchAppInstalled)")
         
         guard session.isPaired else {
             print("❌ Apple Watch is not paired. Cannot sync persona.")
@@ -74,13 +70,11 @@ class WatchSessionManager: NSObject, WCSessionDelegate {
         }
         
         if session.isReachable {
-            // Immediate send if Watch app is active
             session.sendMessage(data, replyHandler: nil) { error in
                 print("❌ Failed to send persona to Watch: \(error.localizedDescription)")
             }
             print("✅ Persona sent to Watch via sendMessage: \(persona.name)")
         } else {
-            // Application Context fallback (state sync)
             do {
                 try session.updateApplicationContext(data)
                 print("✅ Persona updated via ApplicationContext: \(persona.name)")

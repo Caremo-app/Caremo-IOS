@@ -21,8 +21,7 @@ struct SelectPersonaView: View {
                 } else {
                     List(personas) { persona in
                         Button(action: {
-                            session.setPersona(persona)
-                            WatchSessionManager.shared.syncPersonaToWatch(persona: persona)
+                            selectPersona(persona)
                         }) {
                             HStack {
                                 VStack(alignment: .leading, spacing: 4) {
@@ -86,6 +85,18 @@ struct SelectPersonaView: View {
             }
         }
     }
+
+    // MARK: - Persona Selection Handler
+
+    func selectPersona(_ persona: UserPersona) {
+        session.setPersona(persona)
+        print("✅ Persona selected: \(persona.name)")
+
+        // Sync to Watch
+        WatchSessionManager.shared.syncPersonaToWatch(persona: persona)
+    }
+
+    // MARK: - Fetch Personas API
 
     func fetchPersonas() {
         guard let token = UserDefaults.standard.string(forKey: "access_token") else {

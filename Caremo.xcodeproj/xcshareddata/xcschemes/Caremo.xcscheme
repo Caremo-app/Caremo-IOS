@@ -15,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D012FD0A2E1A0B5300790452"
-               BuildableName = "CaremoWatch.app"
-               BlueprintName = "CaremoWatch"
+               BlueprintIdentifier = "D00851592E1912ED00002A74"
+               BuildableName = "Caremo.app"
+               BlueprintName = "Caremo"
                ReferencedContainer = "container:Caremo.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -29,30 +29,6 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES"
       shouldAutocreateTestPlan = "YES">
-      <Testables>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D012FD162E1A0B5400790452"
-               BuildableName = "CaremoWatchTests.xctest"
-               BlueprintName = "CaremoWatchTests"
-               ReferencedContainer = "container:Caremo.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D012FD202E1A0B5400790452"
-               BuildableName = "CaremoWatchUITests.xctest"
-               BlueprintName = "CaremoWatchUITests"
-               ReferencedContainer = "container:Caremo.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-      </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -68,9 +44,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D012FD0A2E1A0B5300790452"
-            BuildableName = "CaremoWatch.app"
-            BlueprintName = "CaremoWatch"
+            BlueprintIdentifier = "D00851592E1912ED00002A74"
+            BuildableName = "Caremo.app"
+            BlueprintName = "Caremo"
             ReferencedContainer = "container:Caremo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -85,9 +61,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D012FD0A2E1A0B5300790452"
-            BuildableName = "CaremoWatch.app"
-            BlueprintName = "CaremoWatch"
+            BlueprintIdentifier = "D00851592E1912ED00002A74"
+            BuildableName = "Caremo.app"
+            BlueprintName = "Caremo"
             ReferencedContainer = "container:Caremo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

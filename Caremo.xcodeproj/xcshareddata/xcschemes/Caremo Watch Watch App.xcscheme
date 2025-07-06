@@ -15,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D012FD2C2E1A0B5400790452"
-               BuildableName = "CaremoWatch Watch App.app"
-               BlueprintName = "CaremoWatch Watch App"
+               BlueprintIdentifier = "D0B873072E1A4D2600D916FF"
+               BuildableName = "Caremo Watch Watch App.app"
+               BlueprintName = "Caremo Watch Watch App"
                ReferencedContainer = "container:Caremo.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -29,9 +29,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D012FD0A2E1A0B5300790452"
-               BuildableName = "CaremoWatch.app"
-               BlueprintName = "CaremoWatch"
+               BlueprintIdentifier = "D00851592E1912ED00002A74"
+               BuildableName = "Caremo.app"
+               BlueprintName = "Caremo"
                ReferencedContainer = "container:Caremo.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -49,9 +49,9 @@
             parallelizable = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D012FD202E1A0B5400790452"
-               BuildableName = "CaremoWatchUITests.xctest"
-               BlueprintName = "CaremoWatchUITests"
+               BlueprintIdentifier = "D0B8731D2E1A4D2700D916FF"
+               BuildableName = "Caremo Watch Watch AppUITests.xctest"
+               BlueprintName = "Caremo Watch Watch AppUITests"
                ReferencedContainer = "container:Caremo.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -60,31 +60,9 @@
             parallelizable = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D012FD162E1A0B5400790452"
-               BuildableName = "CaremoWatchTests.xctest"
-               BlueprintName = "CaremoWatchTests"
-               ReferencedContainer = "container:Caremo.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D012FD3B2E1A0B5400790452"
-               BuildableName = "CaremoWatch Watch AppTests.xctest"
-               BlueprintName = "CaremoWatch Watch AppTests"
-               ReferencedContainer = "container:Caremo.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D012FD452E1A0B5400790452"
-               BuildableName = "CaremoWatch Watch AppUITests.xctest"
-               BlueprintName = "CaremoWatch Watch AppUITests"
+               BlueprintIdentifier = "D0B873132E1A4D2700D916FF"
+               BuildableName = "Caremo Watch Watch AppTests.xctest"
+               BlueprintName = "Caremo Watch Watch AppTests"
                ReferencedContainer = "container:Caremo.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -104,9 +82,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D012FD2C2E1A0B5400790452"
-            BuildableName = "CaremoWatch Watch App.app"
-            BlueprintName = "CaremoWatch Watch App"
+            BlueprintIdentifier = "D0B873072E1A4D2600D916FF"
+            BuildableName = "Caremo Watch Watch App.app"
+            BlueprintName = "Caremo Watch Watch App"
             ReferencedContainer = "container:Caremo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -121,21 +99,12 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D012FD2C2E1A0B5400790452"
-            BuildableName = "CaremoWatch Watch App.app"
-            BlueprintName = "CaremoWatch Watch App"
+            BlueprintIdentifier = "D0B873072E1A4D2600D916FF"
+            BuildableName = "Caremo Watch Watch App.app"
+            BlueprintName = "Caremo Watch Watch App"
             ReferencedContainer = "container:Caremo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D012FD2C2E1A0B5400790452"
-            BuildableName = "CaremoWatch Watch App.app"
-            BlueprintName = "CaremoWatch Watch App"
-            ReferencedContainer = "container:Caremo.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

@@ -4,24 +4,31 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>Caremo Watch Watch App.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>7</integer>
+		</dict>
 		<key>Caremo.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>2</integer>
+			<integer>5</integer>
 		</dict>
 		<key>CaremoWatch Watch App.xcscheme_^#shared#^_</key>
 		<dict>
+			<key>isShown</key>
+			<false/>
 			<key>orderHint</key>
 			<integer>0</integer>
-		</dict>
-		<key>CaremoWatch.xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>1</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>D00851592E1912ED00002A74</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>D012FD0A2E1A0B5300790452</key>
 		<dict>
 			<key>primary</key>
@@ -48,6 +55,11 @@
 			<true/>
 		</dict>
 		<key>D012FD452E1A0B5400790452</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>D0B873072E1A4D2600D916FF</key>
 		<dict>
 			<key>primary</key>
 			<true/>

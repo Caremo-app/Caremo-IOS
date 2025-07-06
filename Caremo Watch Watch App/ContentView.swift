@@ -7,17 +7,14 @@ class ContentViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     
     init() {
-        // Load initial value
         personaName = UserDefaults.standard.string(forKey: "persona_name") ?? "-"
         
-        // Listen to persona updates
         NotificationCenter.default.publisher(for: .personaUpdated)
             .sink { [weak self] _ in
                 self?.personaName = UserDefaults.standard.string(forKey: "persona_name") ?? "-"
             }
             .store(in: &cancellables)
         
-        // Activate WCSession if needed
         if WCSession.isSupported() {
             WCSession.default.activate()
         }
@@ -40,6 +37,11 @@ struct ContentView: View {
             
             Text("Persona: \(viewModel.personaName)")
                 .font(.footnote)
+            
+            Button("Refresh Persona") {
+                viewModel.personaName = UserDefaults.standard.string(forKey: "persona_name") ?? "-"
+            }
+            .buttonStyle(.bordered)
             
             if isSending {
                 Text("💓 Sending ECG every 30s")
@@ -69,7 +71,7 @@ struct ContentView: View {
         }
         
         isSending = true
-        sendECGData() // Send immediately
+        sendECGData()
         
         timer = Timer.scheduledTimer(withTimeInterval: 30.0, repeats: true) { _ in
             sendECGData()
@@ -99,7 +101,6 @@ struct ContentView: View {
     }
     
     func generateDummyECG30s() -> [Double] {
-        // Simulate 30s ECG at 250Hz = 7500 samples
         (0..<7500).map { _ in Double.random(in: 0.8...1.2) }
     }
 }
