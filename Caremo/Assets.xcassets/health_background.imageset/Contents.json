@@ -1,17 +1,15 @@
 {
   "images" : [
     {
-      "filename" : "512x512 remove bg.png",
+      "filename" : "health_background.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "1024x1024 remove bg.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "1536x1536 remove bg.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
