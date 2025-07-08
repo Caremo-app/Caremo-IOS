@@ -2,146 +2,134 @@ import SwiftUI
 
 struct SelectPersonaView: View {
     @State private var personas: [UserPersona] = []
-    @State private var showingAddMember = false
+    @State private var showingAddPersona = false
+    @State private var isLoading = false
+    
     @EnvironmentObject var session: SessionManager
-
+    
     var body: some View {
-        NavigationView {
-            VStack {
-                Text("Siapa yang menggunakan Caremo hari ini?")
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                    .foregroundColor(Color("PrimaryColor"))
-                    .padding()
-
-                if personas.isEmpty {
-                    Text("Belum ada anggota terdaftar.")
-                        .foregroundColor(.gray)
-                        .padding()
-                } else {
-                    List(personas) { persona in
-                        Button(action: {
-                            selectPersona(persona)
-                        }) {
-                            HStack {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(persona.name)
-                                        .font(.headline)
-                                        .foregroundColor(Color("PrimaryColor"))
-                                    Text(persona.email)
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
-                                }
-                                Spacer()
-                                Image(systemName: persona.relay ? "checkmark.circle.fill" : "xmark.circle")
-                                    .foregroundColor(persona.relay ? .green : .red)
-                            }
-                            .padding(.vertical, 8)
+        ZStack {
+            Image("health_background")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea(edges: .all) // ✅ hilangkan putih tepi atas
+                .overlay(BlurView(style: .systemUltraThinMaterialDark).opacity(0.4))
+            
+            VStack(spacing: 16) {
+                Spacer().frame(height: 50) // jarak dari notch atas
+                
+                HStack {
+                    Button(action: {
+                        session.logout()
+                    }) {
+                        HStack {
+                            Image(systemName: "chevron.left")
+                            Text("Logout")
                         }
+                        .foregroundColor(.white)
+                        .padding(10)
+                        .background(Color.red.opacity(0.7))
+                        .cornerRadius(10)
                     }
-                    .listStyle(InsetGroupedListStyle())
+                    
+                    Spacer()
                 }
-
+                .padding(.horizontal, 20)
+                
+                Text("Select Persona")
+                    .font(CaremoTheme.Typography.title)
+                    .foregroundColor(.white)
+                
+                // 🔄 Refresh Button
+                Button(action: {
+                    loadPersonas()
+                }) {
+                    HStack {
+                        Image(systemName: "arrow.clockwise")
+                        Text("Refresh Persona")
+                            .bold()
+                    }
+                    .padding(8)
+                    .background(CaremoTheme.primaryRed.opacity(0.8))
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+                }
+                
+                if isLoading {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        .padding(.top, 20)
+                } else {
+                    ScrollView {
+                        VStack(spacing: 12) {
+                            ForEach(personas) { persona in
+                                Button(action: {
+                                    selectPersona(persona)
+                                }) {
+                                    GlassmorphismView {
+                                        HStack {
+                                            VStack(alignment: .leading, spacing: 4) {
+                                                Text(persona.name)
+                                                    .font(CaremoTheme.Typography.subtitle)
+                                                    .foregroundColor(.white)
+                                                Text(persona.email)
+                                                    .font(CaremoTheme.Typography.caption)
+                                                    .foregroundColor(.white.opacity(0.8))
+                                            }
+                                            Spacer()
+                                        }
+                                    }
+                                    .frame(height: 60)
+                                    .padding(.horizontal, 20)
+                                }
+                            }
+                        }
+                        .padding(.bottom, 40)
+                    }
+                }
+                
                 Spacer()
-
+                
                 Button(action: {
-                    fetchPersonas()
+                    showingAddPersona = true
                 }) {
-                    Text("Refresh Members")
-                        .foregroundColor(.white)
+                    Text("Add Persona")
+                        .bold()
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color("PrimaryColor"))
-                        .cornerRadius(8)
-                        .padding(.horizontal)
-                }
-
-                Button(action: {
-                    showingAddMember = true
-                }) {
-                    Text("Add Member")
+                        .background(CaremoTheme.primaryRed)
                         .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color("SecondaryColor"))
-                        .cornerRadius(8)
-                        .padding(.horizontal)
+                        .cornerRadius(12)
+                        .padding(.horizontal, 20)
                 }
+                .padding(.bottom, 30)
             }
-            .navigationTitle("Pilih Pengguna")
-            .sheet(isPresented: $showingAddMember, onDismiss: {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                    fetchPersonas()
+        }
+        .sheet(isPresented: $showingAddPersona) {
+            AddPersonaView(refreshPersonas: loadPersonas)
+        }
+        .onAppear(perform: loadPersonas)
+    }
+    
+    func loadPersonas() {
+        isLoading = true
+        APIManager.shared.getFamilyPersonas { result in
+            DispatchQueue.main.async {
+                isLoading = false
+                switch result {
+                case .success(let data):
+                    personas = data
+                    print("✅ Loaded \(data.count) personas")
+                case .failure(let error):
+                    print("❌ Failed to load personas: \(error.localizedDescription)")
                 }
-            }) {
-                AddMemberView()
-            }
-            .onAppear {
-                fetchPersonas()
-            }
-            .fullScreenCover(item: $session.selectedPersona) { _ in
-                DashboardView()
-                    .environmentObject(session)
             }
         }
     }
-
-    // MARK: - Persona Selection Handler
-
+    
     func selectPersona(_ persona: UserPersona) {
         session.setPersona(persona)
         print("✅ Persona selected: \(persona.name)")
-
-        // Sync to Watch
-        WatchSessionManager.shared.syncPersonaToWatch(persona: persona)
-    }
-
-    // MARK: - Fetch Personas API
-
-    func fetchPersonas() {
-        guard let token = UserDefaults.standard.string(forKey: "access_token") else {
-            print("❌ No access token found, logging out")
-            DispatchQueue.main.async {
-                session.logout()
-            }
-            return
-        }
-
-        guard let url = URL(string: "https://api.caremo.id/api/v1/family/list") else { return }
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error = error {
-                print("❌ Fetch personas error: \(error.localizedDescription)")
-                return
-            }
-
-            if let data = data {
-                if let responseString = String(data: data, encoding: .utf8) {
-                    print("🔍 Raw personas response: \(responseString)")
-                }
-
-                if let decodedError = try? JSONDecoder().decode([String: String].self, from: data),
-                   decodedError["detail"] == "Access token expired" {
-                    print("❌ Token expired. Logging out...")
-                    DispatchQueue.main.async {
-                        session.logout()
-                    }
-                    return
-                }
-
-                do {
-                    let decoded = try JSONDecoder().decode([UserPersona].self, from: data)
-                    DispatchQueue.main.async {
-                        personas = decoded
-                        print("✅ Personas loaded: \(decoded.count)")
-                    }
-                } catch {
-                    print("❌ Failed to decode personas: \(error)")
-                }
-            }
-        }.resume()
+        // TODO: Navigate to DashboardView after selection if needed
     }
 }
