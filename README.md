@@ -2,6 +2,26 @@
 
 Caremo is an integrated iOS and watchOS solution enabling real-time cardiovascular health monitoring for Indonesian elders using AI-assisted predictions and alerts.
 
+## UI
+
+### Login
+![alt text](image.png)
+
+### Signup
+![alt text](image-1.png)
+
+### Add Persona
+![alt text](image-2.png)
+
+### Persona List
+![alt text](image-3.png)
+
+### Watch OS
+![alt text](image-4.png)
+
+### Whatsapp
+![alt text](<WhatsApp Image 2025-07-10 at 20.48.06_1021bfd8.jpg>)
+
 ## 🛠️ Tech Stacks
 
 ### 📱 iOS App
