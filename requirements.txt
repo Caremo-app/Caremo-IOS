@@ -1,0 +1,24 @@
+# requirements.txt
+# Caremo iOS Frontend Dependencies
+# This file lists all external and native dependencies used in the frontend project.
+
+# Native Apple Frameworks (no installation needed, included in Xcode SDK)
+SwiftUI
+Combine
+WatchConnectivity
+CoreLocation
+HealthKit
+
+# Third-party Dependencies
+# Specify version constraints for reproducibility
+
+Alamofire==5.6.4
+
+# Note:
+# SwiftUI, Combine, WatchConnectivity, CoreLocation, and HealthKit are Apple native frameworks.
+# Alamofire is managed via Swift Package Manager (SPM) in Xcode.
+#
+# Install Alamofire by opening the Xcode project and checking:
+# File -> Swift Packages -> Add Package Dependency
+# Then use: https://github.com/Alamofire/Alamofire
+# Version: 5.6.4 or desired compatible version.
