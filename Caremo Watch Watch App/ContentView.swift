@@ -1,12 +1,19 @@
 import SwiftUI
 import WatchConnectivity
 import Combine
+import CoreLocation
 
-class ContentViewModel: ObservableObject {
+class ContentViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var personaName: String = "-"
-    private var cancellables = Set<AnyCancellable>()
+    @Published var latitude: Double = 0.0
+    @Published var longitude: Double = 0.0
     
-    init() {
+    private var cancellables = Set<AnyCancellable>()
+    private let locationManager = CLLocationManager()
+    
+    override init() {
+        super.init()
+        
         personaName = UserDefaults.standard.string(forKey: "persona_name") ?? "-"
         
         NotificationCenter.default.publisher(for: .personaUpdated)
@@ -18,6 +25,20 @@ class ContentViewModel: ObservableObject {
         if WCSession.isSupported() {
             WCSession.default.activate()
         }
+        
+        setupLocation()
+    }
+    
+    func setupLocation() {
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let loc = locations.last else { return }
+        latitude = loc.coordinate.latitude
+        longitude = loc.coordinate.longitude
     }
 }
 
@@ -43,65 +64,108 @@ struct ContentView: View {
             }
             .buttonStyle(.bordered)
             
-            if isSending {
-                Text("💓 Sending ECG every 30s")
-                    .foregroundColor(.green)
-                
-                Button("Stop ECG Auto-Send") {
-                    stopECGTimer()
-                }
-                .buttonStyle(.bordered)
-            } else {
-                Button("Start ECG Auto-Send") {
-                    startECGTimer()
-                }
-                .buttonStyle(.borderedProminent)
+            Button("Start Predict") {
+                startPredictTimer()
             }
+            .buttonStyle(.borderedProminent)
+            
+            Button("Simulate Family") {
+                simulate(endpoint: "simulate-family")
+            }
+            .buttonStyle(.bordered)
+            
+            Button("Simulate Hospital") {
+                simulate(endpoint: "simulate-hospital")
+            }
+            .buttonStyle(.bordered)
+            
+            Text("Lat: \(viewModel.latitude, specifier: "%.5f")")
+            Text("Lng: \(viewModel.longitude, specifier: "%.5f")")
         }
         .padding()
         .onDisappear {
-            stopECGTimer()
+            stopPredictTimer()
         }
     }
     
-    func startECGTimer() {
+    func startPredictTimer() {
         guard viewModel.personaName != "-" else {
-            print("❌ Persona not synced. Cannot start ECG.")
+            print("❌ Persona not synced. Cannot start predict.")
             return
         }
         
         isSending = true
-        sendECGData()
+        sendPredict()
         
-        timer = Timer.scheduledTimer(withTimeInterval: 30.0, repeats: true) { _ in
-            sendECGData()
+        timer = Timer.scheduledTimer(withTimeInterval: 600, repeats: true) { _ in
+            sendPredict()
         }
         
-        print("✅ ECG auto-send timer started")
+        print("✅ Predict timer started")
     }
     
-    func stopECGTimer() {
+    func stopPredictTimer() {
         timer?.invalidate()
         timer = nil
         isSending = false
-        print("🛑 ECG auto-send timer stopped")
+        print("🛑 Predict timer stopped")
     }
     
-    func sendECGData() {
-        if WCSession.default.isReachable {
-            let ecgSample = generateDummyECG30s()
-            let message = ["ecg": ecgSample]
-            print(message)
-            WCSession.default.sendMessage(message, replyHandler: nil) { error in
-                print("❌ Error sending ECG: \(error.localizedDescription)")
-            }
-            print("✅ Sent ECG data (\(ecgSample.count) samples) to iOS")
-        } else {
-            print("❌ iPhone not reachable")
+    func sendPredict() {
+        let persona = viewModel.personaName
+        let urlString = "https://api.caremo.id/api/v1/ai/predict?name_persona=\(persona)"
+        guard let url = URL(string: urlString) else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let payload: [String: Any] = [
+            "ppg_input": [
+                "signal": [0.12, 0.14, 0.13, 0.15],
+                "heartbeat": 90,
+                "sampling_rate": 250
+            ],
+            "location": [
+                "latitude": viewModel.latitude,
+                "longitude": viewModel.longitude
+            ]
+        ]
+        
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: payload)
+        } catch {
+            print("❌ JSON encoding error: \(error.localizedDescription)")
+            return
         }
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                print("❌ Predict POST error: \(error.localizedDescription)")
+                return
+            }
+            print("✅ Predict POST success")
+        }.resume()
     }
     
-    func generateDummyECG30s() -> [Double] {
-        (0..<300).map { _ in Double.random(in: 0.8...1.2) }
+    func simulate(endpoint: String) {
+        guard viewModel.personaName != "-" else {
+            print("❌ Persona not synced. Cannot simulate.")
+            return
+        }
+        
+        let urlString = "https://api.caremo.id/api/v1/ai/\(endpoint)"
+        guard let url = URL(string: urlString) else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                print("❌ Simulate \(endpoint) POST error: \(error.localizedDescription)")
+                return
+            }
+            print("✅ Simulate \(endpoint) POST success")
+        }.resume()
     }
 }

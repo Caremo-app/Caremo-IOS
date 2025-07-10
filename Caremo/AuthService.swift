@@ -19,21 +19,33 @@ class AuthService {
             "password": password
         ]
         
+        let headers: HTTPHeaders = [
+            "Accept": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded"
+        ]
+        
+        print("🔧 Sending login request with email: \(email)")
+        
         AF.request(url,
                    method: .post,
                    parameters: params,
                    encoding: URLEncoding(destination: .queryString),
-                   headers: ["Accept": "application/json"])
+                   headers: headers)
         .validate()
         .responseDecodable(of: LoginResponse.self) { response in
             switch response.result {
             case .success(let result):
-                // Save tokens
+                // Save tokens securely
                 UserDefaults.standard.setValue(result.access_token, forKey: "access_token")
                 UserDefaults.standard.setValue(result.refresh_token, forKey: "refresh_token")
                 UserDefaults.standard.setValue(result.email, forKey: "email")
+                print("✅ Login success for \(result.email)")
                 completion(.success(result))
             case .failure(let error):
+                print("❌ Login error: \(error.localizedDescription)")
+                if let data = response.data, let body = String(data: data, encoding: .utf8) {
+                    print("❌ Login response body: \(body)")
+                }
                 completion(.failure(error))
             }
         }
@@ -53,20 +65,25 @@ class AuthService {
             "refresh_token": refreshToken
         ]
         
+        let headers: HTTPHeaders = [
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        ]
+        
         AF.request(url,
                    method: .post,
                    parameters: params,
-                   encoding: URLEncoding(destination: .queryString),
-                   headers: ["Accept": "application/json"])
+                   encoding: JSONEncoding.default,
+                   headers: headers)
         .validate()
         .responseDecodable(of: LoginResponse.self) { response in
             switch response.result {
             case .success(let result):
-                // Save new tokens
                 UserDefaults.standard.setValue(result.access_token, forKey: "access_token")
                 UserDefaults.standard.setValue(result.refresh_token, forKey: "refresh_token")
                 completion(.success(result))
             case .failure(let error):
+                print("❌ Refresh token error: \(error.localizedDescription)")
                 completion(.failure(error))
             }
         }
@@ -86,20 +103,25 @@ class AuthService {
             "refresh_token": refreshToken
         ]
         
+        let headers: HTTPHeaders = [
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        ]
+        
         AF.request(url,
                    method: .post,
                    parameters: params,
-                   encoding: URLEncoding(destination: .queryString),
-                   headers: ["Accept": "application/json"])
+                   encoding: JSONEncoding.default,
+                   headers: headers)
         .validate()
         .responseDecodable(of: LogoutResponse.self) { response in
             switch response.result {
             case .success(let result):
-                // Clear saved tokens
                 UserDefaults.standard.removeObject(forKey: "access_token")
                 UserDefaults.standard.removeObject(forKey: "refresh_token")
                 completion(.success(result.message))
             case .failure(let error):
+                print("❌ Logout error: \(error.localizedDescription)")
                 completion(.failure(error))
             }
         }

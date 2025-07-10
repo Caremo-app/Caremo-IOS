@@ -38,35 +38,12 @@ class ExtensionDelegate: NSObject, WKExtensionDelegate, WCSessionDelegate {
         guard let type = applicationContext["type"] as? String, type == "persona" else { return }
         
         let name = applicationContext["name"] as? String ?? "-"
-        let email = applicationContext["email"] as? String ?? "-"
-        let role = applicationContext["role"] as? String ?? "-"
         
         DispatchQueue.main.async {
             UserDefaults.standard.set(name, forKey: "persona_name")
-            UserDefaults.standard.set(email, forKey: "persona_email")
-            UserDefaults.standard.set(role, forKey: "persona_role")
             NotificationCenter.default.post(name: .personaUpdated, object: nil)
             
-            print("✅ Persona saved to UserDefaults: \(name), \(email), \(role)")
-        }
-    }
-    
-    func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
-        print("📩 Received message from iPhone: \(message)")
-        
-        if let type = message["type"] as? String, type == "persona" {
-            let name = message["name"] as? String ?? "-"
-            let email = message["email"] as? String ?? "-"
-            let role = message["role"] as? String ?? "-"
-            
-            DispatchQueue.main.async {
-                UserDefaults.standard.set(name, forKey: "persona_name")
-                UserDefaults.standard.set(email, forKey: "persona_email")
-                UserDefaults.standard.set(role, forKey: "persona_role")
-                NotificationCenter.default.post(name: .personaUpdated, object: nil)
-                
-                print("✅ Persona saved to UserDefaults (message): \(name), \(email), \(role)")
-            }
+            print("✅ Persona saved to UserDefaults: \(name)")
         }
     }
 }
