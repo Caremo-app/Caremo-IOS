@@ -42,7 +42,6 @@ class WatchSessionManager: NSObject, WCSessionDelegate {
         print("📩 Received message from Watch: \(message)")
         
         if message["request"] as? String == "current_persona" {
-            // ✅ Retrieve current persona from UserDefaults (standardized keys)
             let personaName = UserDefaults.standard.string(forKey: "persona_name") ?? "-"
             let personaRole = UserDefaults.standard.string(forKey: "persona_role") ?? "-"
             
@@ -66,8 +65,6 @@ class WatchSessionManager: NSObject, WCSessionDelegate {
         
         let session = WCSession.default
         
-        print("isPaired: \(session.isPaired), isWatchAppInstalled: \(session.isWatchAppInstalled)")
-        
         guard session.isPaired else {
             print("❌ Apple Watch is not paired. Cannot sync persona.")
             return
@@ -78,18 +75,19 @@ class WatchSessionManager: NSObject, WCSessionDelegate {
             return
         }
         
+        // Prefer sendMessage for instant update, fallback to ApplicationContext
         if session.isReachable {
             session.sendMessage(data, replyHandler: nil) { error in
-                print("❌ Failed to send persona to Watch: \(error.localizedDescription)")
+                print("❌ Failed to send persona via sendMessage: \(error.localizedDescription)")
             }
-            print("✅ Persona sent to Watch via sendMessage: \(persona.name) (\(persona.role))")
-        } else {
-            do {
-                try session.updateApplicationContext(data)
-                print("✅ Persona updated via ApplicationContext: \(persona.name) (\(persona.role))")
-            } catch {
-                print("❌ Failed to update ApplicationContext: \(error.localizedDescription)")
-            }
+            print("✅ Persona sent via sendMessage: \(persona.name) (\(persona.role))")
+        }
+        
+        do {
+            try session.updateApplicationContext(data)
+            print("✅ Persona updated via ApplicationContext: \(persona.name) (\(persona.role))")
+        } catch {
+            print("❌ Failed to update ApplicationContext: \(error.localizedDescription)")
         }
     }
 }

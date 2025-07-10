@@ -37,33 +37,37 @@ class ExtensionDelegate: NSObject, WKExtensionDelegate, WCSessionDelegate {
         }
     }
     
+    /// ApplicationContext updates
     func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
         print("📩 Received application context from iPhone: \(applicationContext)")
-        
-        if let type = applicationContext["type"] as? String {
-            if type == "persona" {
-                let name = applicationContext["name"] as? String ?? "-"
-                let role = applicationContext["role"] as? String ?? "-"
-                
-                DispatchQueue.main.async {
-                    UserDefaults.standard.set(name, forKey: "persona_name")
-                    UserDefaults.standard.set(role, forKey: "persona_role")
-                    NotificationCenter.default.post(name: .personaUpdated, object: nil)
-                    print("✅ Persona saved: \(name) (\(role))")
-                }
-            } else if type == "token" {
-                let token = applicationContext["access_token"] as? String ?? ""
-                
-                DispatchQueue.main.async {
-                    UserDefaults.standard.set(token, forKey: "access_token")
-                    print("✅ Token saved to UserDefaults")
-                }
-            }
-        }
+        handlePersonaData(applicationContext)
     }
     
-    // Required for background transfers and message handling
+    /// sendMessage handling
     func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
         print("📩 Received message from iPhone: \(message)")
+        handlePersonaData(message)
+    }
+    
+    /// Helper to process persona data consistently
+    private func handlePersonaData(_ data: [String: Any]) {
+        if let type = data["type"] as? String, type == "persona" {
+            let name = data["name"] as? String ?? "-"
+            let role = data["role"] as? String ?? "-"
+            
+            DispatchQueue.main.async {
+                UserDefaults.standard.set(name, forKey: "persona_name")
+                UserDefaults.standard.set(role, forKey: "persona_role")
+                NotificationCenter.default.post(name: .personaUpdated, object: nil)
+                print("✅ Persona saved: \(name) (\(role))")
+            }
+        } else if let type = data["type"] as? String, type == "token" {
+            let token = data["access_token"] as? String ?? ""
+            
+            DispatchQueue.main.async {
+                UserDefaults.standard.set(token, forKey: "access_token")
+                print("✅ Token saved to UserDefaults")
+            }
+        }
     }
 }
