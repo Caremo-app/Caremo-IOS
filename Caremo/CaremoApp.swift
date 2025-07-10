@@ -6,9 +6,7 @@ struct CaremoApp: App {
     @State private var showSplash = true
 
     init() {
-        // Activate WatchSessionManager & WebSocket on launch
         _ = WatchSessionManager.shared
-        WebSocketECGService.shared.connect(clientID: "1")
     }
 
     var body: some Scene {

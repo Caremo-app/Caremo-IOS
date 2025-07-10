@@ -38,12 +38,21 @@ class WatchSessionManager: NSObject, WCSessionDelegate {
         session.activate()
     }
     
-    func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
+    func session(_ session: WCSession, didReceiveMessage message: [String : Any], replyHandler: @escaping ([String : Any]) -> Void) {
         print("📩 Received message from Watch: \(message)")
         
-        if let ecg = message["ecg"] as? [Double] {
-            print("💓 ECG data received: \(ecg.count) samples")
-            WebSocketECGService.shared.sendECG(ecg: ecg)
+        if message["request"] as? String == "current_persona" {
+            // ✅ Retrieve current persona from UserDefaults (standardized keys)
+            let personaName = UserDefaults.standard.string(forKey: "persona_name") ?? "-"
+            let personaRole = UserDefaults.standard.string(forKey: "persona_role") ?? "-"
+            
+            let response: [String: Any] = [
+                "name": personaName,
+                "role": personaRole
+            ]
+            
+            replyHandler(response)
+            print("✅ Sent current persona to Watch: \(personaName) (\(personaRole))")
         }
     }
     
@@ -73,11 +82,11 @@ class WatchSessionManager: NSObject, WCSessionDelegate {
             session.sendMessage(data, replyHandler: nil) { error in
                 print("❌ Failed to send persona to Watch: \(error.localizedDescription)")
             }
-            print("✅ Persona sent to Watch via sendMessage: \(persona.name)")
+            print("✅ Persona sent to Watch via sendMessage: \(persona.name) (\(persona.role))")
         } else {
             do {
                 try session.updateApplicationContext(data)
-                print("✅ Persona updated via ApplicationContext: \(persona.name)")
+                print("✅ Persona updated via ApplicationContext: \(persona.name) (\(persona.role))")
             } catch {
                 print("❌ Failed to update ApplicationContext: \(error.localizedDescription)")
             }

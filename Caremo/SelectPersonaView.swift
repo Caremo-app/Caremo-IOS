@@ -1,4 +1,5 @@
 import SwiftUI
+import WatchConnectivity
 
 struct SelectPersonaView: View {
     @State private var personas: [UserPersona] = []
@@ -64,8 +65,6 @@ struct SelectPersonaView: View {
                                         VStack(alignment: .leading) {
                                             Text(persona.name)
                                                 .foregroundColor(.white)
-                                                .font(.headline)
-                                            
                                             Text(persona.role.capitalized)
                                                 .foregroundColor(.white.opacity(0.7))
                                                 .font(.subheadline)
@@ -77,15 +76,8 @@ struct SelectPersonaView: View {
                                         }
                                     }
                                     .padding()
-                                    .background(
-                                        ZStack {
-                                            BlurView(style: .systemMaterialDark)
-                                                .opacity(0.5)
-                                            (persona.relay ? Color.blue : Color.purple)
-                                                .opacity(0.3)
-                                        }
-                                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                                    )
+                                    .background(persona.role == "receiver" ? Color.purple.opacity(0.5) : Color.blue.opacity(0.5))
+                                    .cornerRadius(10)
                                 }
                             }
                         }
@@ -127,10 +119,17 @@ struct SelectPersonaView: View {
     
     func selectPersona(_ persona: UserPersona) {
         selectedPersonaID = persona.id
+        
+        // Save consistently for Watch to retrieve
         UserDefaults.standard.set(persona.id, forKey: "selectedPersonaID")
-        UserDefaults.standard.set(persona.name, forKey: "selectedPersonaName")
-        print("✅ Selected persona: \(persona.name)")
+        UserDefaults.standard.set(persona.name, forKey: "persona_name")
+        UserDefaults.standard.set(persona.role, forKey: "persona_role")
+        
+        print("✅ Selected persona: \(persona.name) (\(persona.role))")
         session.selectedPersona = persona
+        
+        // Sync to Watch using WatchSessionManager singleton
+        WatchSessionManager.shared.syncPersonaToWatch(persona: persona)
     }
     
     func logout() {
