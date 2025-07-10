@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		D002E69E2E2017D700AD5B48 /* requirements.txt in Resources */ = {isa = PBXBuildFile; fileRef = D002E69D2E2017D200AD5B48 /* requirements.txt */; };
+		D002E77C2E201A9000AD5B48 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = D002E77B2E201A8200AD5B48 /* LICENSE */; };
 		D030B6932E19E77E007677CB /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = D030B6922E19E77E007677CB /* Alamofire */; };
 		D0B873282E1A4D2700D916FF /* Caremo Watch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = D0B873082E1A4D2600D916FF /* Caremo Watch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -38,6 +39,7 @@
 
 /* Begin PBXFileReference section */
 		D002E69D2E2017D200AD5B48 /* requirements.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = requirements.txt; sourceTree = "<group>"; };
+		D002E77B2E201A8200AD5B48 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		D008515A2E1912ED00002A74 /* Caremo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Caremo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0B873082E1A4D2600D916FF /* Caremo Watch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Caremo Watch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -77,6 +79,7 @@
 		D00851512E1912ED00002A74 = {
 			isa = PBXGroup;
 			children = (
+				D002E77B2E201A8200AD5B48 /* LICENSE */,
 				D002E69D2E2017D200AD5B48 /* requirements.txt */,
 				D008515C2E1912ED00002A74 /* Caremo */,
 				D0B873092E1A4D2600D916FF /* Caremo Watch Watch App */,
@@ -190,6 +193,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D002E69E2E2017D700AD5B48 /* requirements.txt in Resources */,
+				D002E77C2E201A9000AD5B48 /* LICENSE in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
